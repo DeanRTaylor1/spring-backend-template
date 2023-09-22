@@ -27,7 +27,7 @@ public class UserService {
 
 
     public void addNewUser(User user) {
-       Optional<User> userByEmail = userRepository.findUserByEmail(user.getEmail());
+       Optional<User> userByEmail = userRepository.findByEmail(user.getEmail());
 
        if(userByEmail.isPresent()){
            throw new IllegalStateException("Email already exists");
