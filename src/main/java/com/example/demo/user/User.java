@@ -19,6 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class User implements UserDetails {
+    @Getter
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "user_sequence")
@@ -69,7 +70,7 @@ public class User implements UserDetails {
         this.email = email;
     }
     
-    public void setDob(LocalDate dob) {
+    public void setDob(@Nullable LocalDate dob) {
         this.dob = dob;
     }
     
