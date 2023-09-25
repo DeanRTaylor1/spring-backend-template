@@ -7,8 +7,12 @@ import com.example.demo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,10 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     
     public AuthenticationResponse register(RegisterRequest request) {
+        Optional<User> existingUser = this.userRepository.findByEmail(request.getEmail());
+        if (existingUser.isPresent()) {
+            throw new IllegalStateException("User Exists Please authenticate.");
+        }
         var user = User
                 .builder()
                 .name(request.getName())
