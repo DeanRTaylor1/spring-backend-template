@@ -1,10 +1,12 @@
 package com.example.demo.user;
 
+import com.example.demo.departments.Department;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,25 +17,34 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table
+@Getter
+@Table(name = "users")
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
-    @Getter
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "user_sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
     
+    @Column(nullable = false)
     @Getter
-    private String name;
+    private String firstName;
     
+    @Column(nullable = false)
+    @Getter
+    private String lastName;
+    
+    @Column(unique = true, nullable = false)
     @Getter
     private String email;
     
-    @Nullable
+    @Column
     private LocalDate dob;
     
-    private String password;
+    @Column
+    private String passwordHash;
     
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -41,48 +52,39 @@ public class User implements UserDetails {
     @Transient
     private Integer age;
     
-    public User() {
+    @Column
+    @Getter
+    private LocalDate startDate;
+    
+    @Column
+    @Getter
+    private String phoneNumber;
+    
+    @Column
+    @Getter
+    private String address;
+    
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = true)
+    @Getter
+    private Department department;
+    
+    @Column
+    private String position;
+    
+    @Enumerated(EnumType.STRING)
+    private Status status;
+    
+    
+     public int getAge() {
+        if (this.dob != null) {
+            return Period
+                    .between(this.dob, LocalDate.now())
+                    .getYears();
+        }
+        return 0;
     }
     
-    public User(String name, String email, @Nullable LocalDate dob) {
-        this.name = name;
-        this.email = email;
-        this.dob = dob;
-    }
-    
-    public User(Long id, String name, String email, @Nullable LocalDate dob) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.dob = dob;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public void setDob(@Nullable LocalDate dob) {
-        this.dob = dob;
-    }
-    
-    public Integer getAge() {
-        return Period
-                .between(this.dob, LocalDate.now())
-                .getYears();
-    }
-    
-    @Override
-    public String toString() {
-        return "User{" + "id=" + id + ", name='" + name + '\'' + ", email='" + email + '\'' + ", dob=" + dob + ", age=" + age + '}';
-    }
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -91,11 +93,11 @@ public class User implements UserDetails {
     
     @Override
     public String getPassword() {
-        return password;
+        return passwordHash;
     }
     
     public void setPassword(String password) {
-        this.password = password;
+        this.passwordHash = password;
     }
     
     @Override

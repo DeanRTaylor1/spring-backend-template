@@ -21,13 +21,15 @@ public class SecurityConfiguration {
     
     // Declare JwtAuthenticationFilter to filter incoming requests
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     
-    // Constructor injection of AuthenticationProvider and JwtAuthenticationFilter
-    public SecurityConfiguration(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthFilter) {
+    public SecurityConfiguration(AuthenticationProvider authenticationProvider,
+                                 JwtAuthenticationFilter jwtAuthFilter,
+                                 JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthFilter = jwtAuthFilter;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
-    
     // Define a Bean of type SecurityFilterChain, which holds the security configuration
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -52,6 +54,10 @@ public class SecurityConfiguration {
                 
                 // Set the AuthenticationProvider to be used
                 .authenticationProvider(authenticationProvider)
+                
+                //Custom error handling for missing jwt
+                .exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                
                 
                 // Add the JwtAuthenticationFilter before UsernamePasswordAuthenticationFilter to the filter chain
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

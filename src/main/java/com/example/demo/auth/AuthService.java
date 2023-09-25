@@ -2,6 +2,7 @@ package com.example.demo.auth;
 
 import com.example.demo.config.JwtService;
 import com.example.demo.user.Role;
+import com.example.demo.user.Status;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -30,11 +32,15 @@ public class AuthService {
         }
         var user = User
                 .builder()
-                .name(request.getName())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .dob(request.getDob())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .phoneNumber(request.getPhoneNumber())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .status(Status.ACTIVE)
+                .role(Role.EMPLOYEE)
+                .startDate(LocalDate.now())
                 .build();
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);

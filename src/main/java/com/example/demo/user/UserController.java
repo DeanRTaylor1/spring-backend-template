@@ -1,14 +1,16 @@
 package com.example.demo.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/user")
 public class UserController {
+    
 
     private final UserService userService;
 
@@ -18,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> init() {
+    public List<UserResponse> init() {
         return userService.getUsers();
     }
 
