@@ -26,7 +26,7 @@ public class UserController {
 
     //@RequestBody automatically maps the body to a User
     @PostMapping
-    public void registerNewUser(@RequestBody User user){
-        userService.addNewUser(user);
+    public UserResponse registerNewUser(@RequestBody User user){
+        return userService.addNewUser(user);
     }
 }

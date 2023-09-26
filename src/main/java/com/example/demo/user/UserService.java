@@ -35,7 +35,7 @@ public class UserService {
     }
     
     
-    public void addNewUser(User user) {
+    public UserResponse addNewUser(User user) {
         Optional<User> userByEmail = userRepository.findByEmail(user.getEmail());
         
         if (userByEmail.isPresent()) {
@@ -43,6 +43,8 @@ public class UserService {
         }
         
         userRepository.save(user);
+        
+        return this.convertToUserResponse(user);
     }
     
     private UserResponse convertToUserResponse(User user) {
